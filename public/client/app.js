@@ -11,6 +11,13 @@ window.Shortly = Backbone.View.extend({
     $('body').append(this.render().el);
 
     this.router = new Shortly.Router({ el: this.$el.find('#container') });
+
+    // store user's desired path
+    // check for authentication
+    // if yes, continue to path
+    // else
+      // redirect to /login
+
     this.router.on('route', this.updateNav, this);
 
     Backbone.history.start({ pushState: true });
@@ -29,6 +36,11 @@ window.Shortly = Backbone.View.extend({
   renderCreateView: function(e){
     e && e.preventDefault();
     this.router.navigate('/create', { trigger: true });
+  },
+
+  renderLoginView: function(e){
+    e && e.preventDefault();
+    this.router.navigate('/login', { trigger: true });
   },
 
   updateNav: function(routeName){
