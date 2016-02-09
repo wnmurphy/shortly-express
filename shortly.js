@@ -130,15 +130,13 @@ function(req, res) {
 app.post('/signup',
 function(req, res) {
   console.log('shortly.js app.get /signup');
-  // Parse JSON username and password
-  // instantiate new User model w username/password
-  // insert into db
   var username = req.body.username;
   var password = req.body.password;
   new User({
     'username': username,
     'password': password
   }).save().then(function(newUser) {
+    console.log(newUser);
     Users.add(newUser);
     res.send(200, newUser);
   });
