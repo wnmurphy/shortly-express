@@ -59,6 +59,7 @@ describe('', function() {
       });
   });
 
+// Link Creation /////////////////////////////////////////////////
   xdescribe('Link creation:', function(){
 
     var requestWithSession = request.defaults({jar: true});
@@ -212,7 +213,8 @@ describe('', function() {
 
   }); // 'Link creation'
 
-  describe('Privileged Access:', function(){
+// Privileged Access /////////////////////////////////////////////////
+  xdescribe('Privileged Access:', function(){
 
     it('Redirects to login page if a user tries to access the main page and is not signed in', function(done) {
       request('http://127.0.0.1:4568/', function(error, res, body) {
@@ -237,7 +239,8 @@ describe('', function() {
 
   }); // 'Priviledged Access'
 
-  xdescribe('Account Creation:', function(){
+// Account Creation /////////////////////////////////////////////////
+  describe('Account Creation:', function(){
 
     it('Signup creates a user record', function(done) {
       var options = {
@@ -267,7 +270,7 @@ describe('', function() {
       });
     });
 
-    it('Signup logs in a new user', function(done) {
+    xit('Signup logs in a new user', function(done) {
       var options = {
         'method': 'POST',
         'uri': 'http://127.0.0.1:4568/signup',
@@ -285,6 +288,8 @@ describe('', function() {
 
   }); // 'Account Creation'
 
+
+// Account Login /////////////////////////////////////////////////
   xdescribe('Account Login:', function(){
 
     var requestWithSession = request.defaults({jar: true});

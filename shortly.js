@@ -35,7 +35,7 @@ app.use(session({
 
 // Check for auth before every response
 app.use(function (req, res, next) {
-  if(req.path !== '/login'){ // change to detect auth
+  if(req.path !== '/login' && req.path !== '/signup' && req.path !== '/logout'){ // change to detect auth by checking current session
     res.redirect('login');
   }
   next();
@@ -99,35 +99,68 @@ function(req, res) {
 app.get('/login',
 function(req, res) {
   res.render('login');
+  console.log('shortly.js app.get /login');
 });
 
-app.post('/login', function(request, response) {
+app.post('/login', function(req, res) {
 
-    var username = request.body.username;
-    var password = request.body.password;
+    var username = req.body.username;
+    var password = req.body.password;
 
     console.log("USER :", username);
     console.log("PW :", password);
 
     if(username == 'demo' && password == 'demo'){
       console.log("Logged in!");
-      response.redirect('/index');
+      res.redirect('/index');
     }
     else {
        res.redirect('login');
     }
 });
 
+// Load signup page
 app.get('/signup',
 function(req, res) {
+  console.log("shortly.js app.get /signup");
   res.render('signup');
 });
 
-// Submit credentials
-// app.post('/signup',
-// function(req, res) {
-//   res.render('login');
-// });
+// Submit credentials on signup page
+app.post('/signup',
+function(req, res) {
+  console.log('shortly.js app.get /signup');
+  // Parse JSON username and password
+  // instantiate new User model w username/password
+  // insert into db
+  var username = req.body.username;
+  var password = req.body.password;
+  new User({
+    'username': username,
+    'password': password
+  }).save().then(function(newUser) {
+    Users.add(newUser);
+    res.send(200, newUser);
+  });
+  // .then(function(){
+  //   var options = {
+  //     'method': 'POST',
+  //     'followAllRedirects': true,
+  //     'uri': 'http://127.0.0.1:4568/login',
+  //     'json': {
+  //       'username': 'Phillip',
+  //       'password': 'Phillip'
+  //     }
+  //   };
+
+});
+
+// Load signup page
+app.get('/logout',
+function(req, res) {
+  console.log('shortly.js app.get /logout');
+  //destroy session here
+});
 
 /************************************************************/
 // Handle the wildcard route last - if all other routes fail
