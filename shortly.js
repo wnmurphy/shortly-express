@@ -2,7 +2,7 @@ var express = require('express');
 var util = require('./lib/utility');
 var partials = require('express-partials');
 var bodyParser = require('body-parser');
-
+var session = require('express-session');
 
 var db = require('./app/config');
 var Users = require('./app/collections/users');
@@ -16,17 +16,26 @@ var app = express();
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
+// Plug in middleware... ///////////////////
 app.use(partials());
 
 // Parse JSON (uniform resource locators)
 app.use(bodyParser.json());
 // Parse forms (signup/login)
 app.use(bodyParser.urlencoded({ extended: true }));
+// Set root directory for express app
 app.use(express.static(__dirname + '/public'));
+// Add session
+app.use(session({
+  secret: 'keyboard cat',
+  cookie: {
+    maxAge: 60000
+  }
+}));
 
+// Check for auth before every response
 app.use(function (req, res, next) {
-  // check for auth before every response
-  if(req.path !== '/login'){
+  if(req.path !== '/login'){ // change to detect auth
     res.redirect('login');
   }
   next();
@@ -92,10 +101,33 @@ function(req, res) {
   res.render('login');
 });
 
+app.post('/login', function(request, response) {
+
+    var username = request.body.username;
+    var password = request.body.password;
+
+    console.log("USER :", username);
+    console.log("PW :", password);
+
+    if(username == 'demo' && password == 'demo'){
+      console.log("Logged in!");
+      response.redirect('/index');
+    }
+    else {
+       res.redirect('login');
+    }
+});
+
 app.get('/signup',
 function(req, res) {
   res.render('signup');
 });
+
+// Submit credentials
+// app.post('/signup',
+// function(req, res) {
+//   res.render('login');
+// });
 
 /************************************************************/
 // Handle the wildcard route last - if all other routes fail

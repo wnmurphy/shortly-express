@@ -1,10 +1,10 @@
 Shortly.createLoginView = Backbone.View.extend({
-  className: 'creator', // ? class for Login view?
+  className: 'creator', 
 
   template: Templates['login'],
 
   events: {
-    'submit': 'shortenUrl' // ? need login event?
+    'submit': 'shortenUrl' 
   },
 
   render: function() {
