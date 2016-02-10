@@ -270,7 +270,7 @@ describe('', function() {
       });
     });
 
-    xit('Signup logs in a new user', function(done) {
+    it('Signup logs in a new user', function(done) {
       var options = {
         'method': 'POST',
         'uri': 'http://127.0.0.1:4568/signup',
@@ -281,6 +281,8 @@ describe('', function() {
       };
 
       request(options, function(error, res, body) {
+        console.log("SERVERSPEC RESPONSE RECEIVED:")
+        console.log(res.headers);
         expect(res.headers.location).to.equal('/');
         done();
       });

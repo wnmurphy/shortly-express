@@ -3,6 +3,7 @@ var util = require('./lib/utility');
 var partials = require('express-partials');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var request = require('request');
 
 var db = require('./app/config');
 var Users = require('./app/collections/users');
@@ -25,6 +26,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // Set root directory for express app
 app.use(express.static(__dirname + '/public'));
+
 // Add session
 app.use(session({
   secret: 'keyboard cat',
@@ -33,33 +35,21 @@ app.use(session({
   }
 }));
 
-// Check for auth before every response
-app.use(function (req, res, next) {
-  if(req.path !== '/login' && req.path !== '/signup' && req.path !== '/logout'){ // change to detect auth by checking current session
-    res.redirect('login');
-  }
-  next();
-});
-
-app.get('/',
-function(req, res) {
+app.get('/', util.checkUser, function(req, res) {
   res.render('login');
 });
 
-app.get('/create',
-function(req, res) {
+app.get('/create', util.checkUser, function(req, res) {
   res.render('index');
 });
 
-app.get('/links',
-function(req, res) {
+app.get('/links', util.checkUser, function(req, res) {
   Links.reset().fetch().then(function(links) {
     res.send(200, links.models);
   });
 });
 
-app.post('/links',
-function(req, res) {
+app.post('/links', util.checkUser, function(req, res) {
   var uri = req.body.url;
 
   if (!util.isValidUrl(uri)) {
@@ -71,7 +61,7 @@ function(req, res) {
     if (found) {
       res.send(200, found.attributes);
     } else {
-      util.getUrlTitle(uri, function(err, title) {
+      util.getUrlTitle(uri, function (err, title) {
         if (err) {
           console.log('Error reading URL heading: ', err);
           return res.send(404);
@@ -96,10 +86,8 @@ function(req, res) {
 // Write your authentication routes here
 /************************************************************/
 
-app.get('/login',
-function(req, res) {
+app.get('/login', function(req, res) {
   res.render('login');
-  console.log('shortly.js app.get /login');
 });
 
 app.post('/login', function(req, res) {
@@ -110,53 +98,52 @@ app.post('/login', function(req, res) {
     console.log("USER :", username);
     console.log("PW :", password);
 
-    if(username == 'demo' && password == 'demo'){
-      console.log("Logged in!");
-      res.redirect('/index');
+    if(username == 'Phillip' && password == 'Phillip'){
+      console.log("PHILLIP LOGGED IN");
+      res.redirect('/');
     }
     else {
-       res.redirect('login');
+      console.log("LOGIN DIDN'T MATCH");
+      res.redirect('login');
     }
 });
 
 // Load signup page
-app.get('/signup',
-function(req, res) {
-  console.log("shortly.js app.get /signup");
+app.get('/signup', function(req, res) {
   res.render('signup');
 });
 
 // Submit credentials on signup page
-app.post('/signup',
-function(req, res) {
-  console.log('shortly.js app.get /signup');
+app.post('/signup', function(req, res) {
   var username = req.body.username;
   var password = req.body.password;
   new User({
     'username': username,
     'password': password
   }).save().then(function(newUser) {
-    console.log(newUser);
     Users.add(newUser);
     res.send(200, newUser);
-  });
-  // .then(function(){
-  //   var options = {
-  //     'method': 'POST',
-  //     'followAllRedirects': true,
-  //     'uri': 'http://127.0.0.1:4568/login',
-  //     'json': {
-  //       'username': 'Phillip',
-  //       'password': 'Phillip'
-  //     }
-  //   };
+  }).then(function(){
+    var options = {
+      'method': 'POST',
+      'followAllRedirects': true,
+      'uri': 'http://127.0.0.1:4568/login',
+      'json': {
+        'username': username,
+        'password': password
+      }
+    };
 
+    request(options, function(error, res, body) {
+      if(error){
+        console.error(error);
+      }
+    });
+  });
 });
 
 // Load signup page
-app.get('/logout',
-function(req, res) {
-  console.log('shortly.js app.get /logout');
+app.get('/logout', function(req, res) {
   //destroy session here
 });
 
