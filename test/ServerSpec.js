@@ -281,8 +281,6 @@ describe('', function() {
       };
 
       request(options, function(error, res, body) {
-        console.log("SERVERSPEC RESPONSE RECEIVED:")
-        console.log(res.headers);
         expect(res.headers.location).to.equal('/');
         done();
       });
