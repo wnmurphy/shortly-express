@@ -91,11 +91,26 @@ app.get('/login', function(req, res) {
   res.render('login');
 });
 
-app.post('/login', function(req, res) {
+// Load signup page
+app.get('/signup', function(req, res) {
+  res.render('signup');
+});
 
+// Load signup page
+app.get('/logout', function(req, res) {
+  console.log("got /logout request");
+  req.session.destroy(function(err){
+    if(err){console.error(error)}
+  });
+  res.render('login');
+
+});
+
+
+
+app.post('/login', function(req, res) {
   var username = req.body.username;
   var password = req.body.password;
-
   // create new User
   var newUser = new User({username: username}).fetch()
     .then(function(newUser){
@@ -114,11 +129,6 @@ app.post('/login', function(req, res) {
     });
   });
 
-// Load signup page
-app.get('/signup', function(req, res) {
-  res.render('signup');
-});
-
 // Submit credentials on signup page
 app.post('/signup', function(req, res) {
   var username = req.body.username;
@@ -132,15 +142,6 @@ app.post('/signup', function(req, res) {
   }).then(function(newUser){
     util.createSession(req, res, newUser);
   });
-});
-
-// Load signup page
-app.get('/logout', function(req, res) {
-  console.log("got /logout request");
-  req.session.destroy(function(err){
-    if(err){console.error(error)}
-  });
-  res.render('login');
 });
 
 

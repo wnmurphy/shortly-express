@@ -60,7 +60,7 @@ describe('', function() {
   });
 
 // Link Creation /////////////////////////////////////////////////
-  xdescribe('Link creation:', function(){
+  describe('Link creation:', function(){
 
     var requestWithSession = request.defaults({jar: true});
 
@@ -292,7 +292,7 @@ describe('', function() {
 
 
 // Account Login /////////////////////////////////////////////////
-  xdescribe('Account Login:', function(){
+  describe('Account Login:', function(){
 
     var requestWithSession = request.defaults({jar: true});
 

@@ -35,7 +35,7 @@ Shortly.Router = Backbone.Router.extend({
   },
 
   logout: function(){
-    this.swapView(new Shortly.createLoginView());
+    //this.swapView(new Shortly.createLoginView());
     // destroy session
   }
 });
