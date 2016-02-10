@@ -3,7 +3,8 @@ window.Shortly = Backbone.View.extend({
 
   events: {
     'click li a.index':  'renderIndexView',
-    'click li a.create': 'renderCreateView'
+    'click li a.create': 'renderCreateView',
+    'click li a.logout': 'logout'
   },
 
   initialize: function(){
@@ -11,12 +12,6 @@ window.Shortly = Backbone.View.extend({
     $('body').append(this.render().el);
 
     this.router = new Shortly.Router({ el: this.$el.find('#container') });
-
-    // store user's desired path
-    // check for authentication
-    // if yes, continue to path
-    // else
-      // redirect to /login
 
     this.router.on('route', this.updateNav, this);
 
@@ -48,5 +43,10 @@ window.Shortly = Backbone.View.extend({
       .removeClass('selected')
       .filter('.' + routeName)
       .addClass('selected');
+  },
+
+  logout: function(e){
+    e && e.preventDefault();
+    this.router.navigate('/logout', { trigger: true });
   }
 });

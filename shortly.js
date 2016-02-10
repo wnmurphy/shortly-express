@@ -128,30 +128,21 @@ app.post('/signup', function(req, res) {
     'password': password
   }).save().then(function(newUser) {
     Users.add(newUser);
-    res.send(200, newUser);
-  }).then(function(){
-    var options = {
-      'method': 'POST',
-      'followAllRedirects': true,
-      'uri': 'http://127.0.0.1:4568/login',
-      'json': {
-        'username': username,
-        'password': password
-      }
-    };
-
-    request(options, function(error, res, body) {
-      if(error){
-        console.error(error);
-      }
-    });
+    return newUser;
+  }).then(function(newUser){
+    util.createSession(req, res, newUser);
   });
 });
 
 // Load signup page
 app.get('/logout', function(req, res) {
-  //destroy session here
+  console.log("got /logout request");
+  req.session.destroy(function(err){
+    if(err){console.error(error)}
+  });
+  res.render('login');
 });
+
 
 /************************************************************/
 // Handle the wildcard route last - if all other routes fail
