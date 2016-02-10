@@ -4,6 +4,7 @@ var partials = require('express-partials');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var request = require('request');
+var bcrypt = require('bcrypt-nodejs');
 
 var db = require('./app/config');
 var Users = require('./app/collections/users');
@@ -36,7 +37,7 @@ app.use(session({
 }));
 
 app.get('/', util.checkUser, function(req, res) {
-  res.render('login');
+  res.render('index');
 });
 
 app.get('/create', util.checkUser, function(req, res) {
@@ -92,21 +93,26 @@ app.get('/login', function(req, res) {
 
 app.post('/login', function(req, res) {
 
-    var username = req.body.username;
-    var password = req.body.password;
+  var username = req.body.username;
+  var password = req.body.password;
 
-    console.log("USER :", username);
-    console.log("PW :", password);
-
-    if(username == 'Phillip' && password == 'Phillip'){
-      console.log("PHILLIP LOGGED IN");
-      res.redirect('/');
-    }
-    else {
-      console.log("LOGIN DIDN'T MATCH");
-      res.redirect('login');
-    }
-});
+  // create new User
+  var newUser = new User({username: username}).fetch()
+    .then(function(newUser){
+    // if match
+      if(!newUser){
+        res.redirect('/login');
+      } else {
+        bcrypt.compare(password, newUser.get('password'), function(err, match){
+          if(match){
+            util.createSession(req, res, newUser);
+          } else {
+            res.redirect('login');
+          }
+        })
+      }
+    });
+  });
 
 // Load signup page
 app.get('/signup', function(req, res) {
