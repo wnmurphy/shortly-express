@@ -6,7 +6,7 @@ Shortly.createLoginView = Backbone.View.extend({
   events: {
   },
 
-  render: function() {
+  render: function () {
     this.$el.html( this.template() );
     return this;
   }
